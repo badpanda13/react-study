@@ -5,7 +5,7 @@ const EmployeesList = ({data}) => {
 
     const elements = data.map(item => {
         return (
-            <EmployeesListItem {...item} />
+            <EmployeesListItem {...item}/>
         )
     })
 
