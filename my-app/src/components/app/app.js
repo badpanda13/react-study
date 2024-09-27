@@ -12,9 +12,9 @@ class App extends Component {
         super(props);
         this.state = {
             data : [
-                {name: 'John L', salary: 800, increase: true, id:1},
-                {name: 'Lisa T', salary: 1000, increase: false, id:2},
-                {name: 'Melody W', salary: 1400, increase:true, id:3}
+                {name: 'John L', salary: 800, increase: true, rise: true, id:1},
+                {name: 'Lisa T', salary: 1000, increase: false, rise: false, id:2},
+                {name: 'Melody W', salary: 1400, increase:true, rise: false, id:3}
             ]
         }
         this.idMax = 4;
@@ -29,7 +29,7 @@ class App extends Component {
     }
 
     addItem = (name, salary) => {
-        const newItem = {name:name, salary:salary,increase: false, id:this.idMax++};
+        const newItem = {name:name, salary:salary,increase: false, rise: false, id:this.idMax++};
         this.setState(({data}) => {
             const arr = [...data, newItem];
             return {
@@ -39,17 +39,32 @@ class App extends Component {
 
     }
     
+    onToggleProp = (id, prop) => {
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if(item.id === id){
+                    return {...item, [prop]: !item[prop]}
+                }
+                return item;
+            })
+        }))
+    }
 
     render() {
+        const increaseEmpls = this.state.data.filter(item => item.increase).length;
         return (
             <div className="app">
-                <AppInfo/>
+                <AppInfo
+                allEmpls={this.state.data.length}
+                increaseEmpls={increaseEmpls}
+                />
                 <div className="search-panel">
                 <SearchPanel/>
                 <AppFilter/>
                 </div>
                 <EmployeesList 
                 data={this.state.data}
+                onToggleProp={this.onToggleProp}
                 onDelete={this.deleteItem}/>
                 <EmployeesAddForm
                 onAdd={this.addItem}/>
