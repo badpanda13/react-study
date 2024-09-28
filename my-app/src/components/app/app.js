@@ -16,7 +16,8 @@ class App extends Component {
                 {name: 'Lisa T', salary: 1000, increase: false, rise: false, id:2},
                 {name: 'Melody W', salary: 1400, increase:true, rise: false, id:3}
             ],
-            term:''
+            term:'',
+            filter:''
         }
         this.idMax = 4;
     }
@@ -30,6 +31,7 @@ class App extends Component {
     }
 
     addItem = (name, salary) => {
+        console.log("add "+this.idMax);
         const newItem = {name:name, salary:salary,increase: false, rise: false, id:this.idMax++};
         this.setState(({data}) => {
             const arr = [...data, newItem];
@@ -52,23 +54,42 @@ class App extends Component {
     }
 
     searchEmp = (items, term) => {
+        console.log("term "+term);
         if(term.length === 0){
             return items;
         }
-        return items.filter(item => {
-            return item.name.indexOf(term) > -1;
-        })
+        if(term.length>0 ){
+            return items.filter(item => {
+                return item.name.indexOf(term) > -1;
+            })
+        }
     }
 
+    filterPost = (items,filter) =>{
+        console.log("filter "+filter);
+        switch(filter){
+            case 'rise':
+                return items.filter(item => item.rise);
+            case 'moreThan1000':
+                return items.filter(item => item.salary >= 1000);
+            default:
+                return items;
+        }
 
+    }
     onUpdateSearch = (term) => {
         this.setState({term});
     }
+
+    onUpdateFilter = (filter) => {
+        console.log("filter "+filter);
+        this.setState({filter});
+    }
     
     render() {
-        const {data,term} = this.state;
+        const {data,term,filter} = this.state;
         const increaseEmpls = this.state.data.filter(item => item.increase).length;
-        const visibleData = this.searchEmp(data,term);
+        const visibleData = this.filterPost(this.searchEmp(data,term), filter);
         return (
             <div className="app">
                 <AppInfo
@@ -77,7 +98,8 @@ class App extends Component {
                 />
                 <div className="search-panel">
                 <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
-                <AppFilter/>
+                <AppFilter onUpdateFilter={this.onUpdateFilter}
+                filter={filter}/>
                 </div>
                 <EmployeesList 
                 data={visibleData}
